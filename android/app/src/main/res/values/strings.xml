@@ -55,6 +55,7 @@
     <!--    Lessons-->
 
     <string name="lessons_next">Вперёд</string>
+    <string name="lessons_prev">Назад</string>
     <string name="lessons_db_not_initialized_warning">
         Раздел практики загружается. Попробуйте еще раз.
     </string>

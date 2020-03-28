@@ -8,10 +8,48 @@
             type="ru.spbstu.amd.learnbraille.screens.lessons.LessonStepViewModel" />
     </data>
 
-    <Button
-        android:id="@+id/next_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/greenButton"
-        android:text="@string/lessons_next" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/prev_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="@{() -> lessonStepViewModel.prevStep()}"
+            android:text="@string/lessons_prev" />
+
+        <!--        TODO extract layout_weight to variable-->
+        <ViewStub
+            android:id="@+id/lesson_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:layout="@layout/inner_lesson_info" />
+
+        <ViewStub
+            android:id="@+id/lesson_dots"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:layout="@layout/inner_lesson_dots" />
+
+        <ViewStub
+            android:id="@+id/lesson_symbol"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:layout="@layout/inner_lesson_symbol" />
+
+        <Button
+            android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="@{() -> lessonStepViewModel.nextStep()}"
+            android:text="@string/lessons_next" />
+
+    </LinearLayout>
 </layout>
