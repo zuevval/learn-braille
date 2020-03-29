@@ -75,7 +75,7 @@ class LessonStepFragment : Fragment() {
         setHasOptionsMenu(true)
 
 
-        lessonDots.viewStub?.isVisible = true
+        lessonSymbol.viewStub?.isVisible = true
 
     }.root
 

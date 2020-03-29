@@ -14,4 +14,20 @@
         <item name="android:forceDarkAllowed">false</item>
     </style>
 
+    <style name="BrailleDotsButtonsView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleX">@dimen/braille_dots_scale_of_view</item>
+        <item name="android:scaleY">@dimen/braille_dots_scale_of_view</item>
+    </style>
+
+    <style name="BigLetterTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleX">@dimen/letter_practice_scale_of_view</item>
+        <item name="android:scaleY">@dimen/letter_practice_scale_of_view</item>
+        <item name="android:textSize">170sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

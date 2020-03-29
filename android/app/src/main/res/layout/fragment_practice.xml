@@ -18,13 +18,8 @@
 
         <TextView
             android:id="@+id/letter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleX="@dimen/letter_practice_scale_of_view"
-            android:scaleY="@dimen/letter_practice_scale_of_view"
+            style="@style/BigLetterTextView"
             android:text="@{practiceViewModel.symbol}"
-            android:textSize="170sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/practice_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,10 +40,7 @@
 
         <ru.spbstu.amd.learnbraille.views.ButtonsView
             android:id="@+id/practice_buttons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleX="@dimen/braille_dots_scale_of_view"
-            android:scaleY="@dimen/braille_dots_scale_of_view"
+            style="@style/BrailleDotsButtonsView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/letter"
             app:layout_constraintStart_toStartOf="@+id/letter"

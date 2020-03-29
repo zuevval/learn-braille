@@ -32,13 +32,6 @@
             android:layout="@layout/inner_lesson_info"/>
 
         <ViewStub
-            android:id="@+id/lesson_dots"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="6"
-            android:layout="@layout/inner_lesson_dots" />
-
-        <ViewStub
             android:id="@+id/lesson_symbol"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
