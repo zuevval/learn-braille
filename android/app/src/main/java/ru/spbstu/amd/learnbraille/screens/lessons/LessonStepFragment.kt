@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -90,7 +91,8 @@ class LessonStepFragment : Fragment() {
             container,
             false
         ).apply {
-            /*dotCheckBoxes = lessonDots.run {
+            /* TODO why null pointer exception?
+            dotCheckBoxes = lessonDots.run {
                 arrayOf(
                     dotButton1, dotButton2, dotButton3,
                     dotButton4, dotButton5, dotButton6
@@ -108,21 +110,49 @@ class LessonStepFragment : Fragment() {
             infoTextView = textView
         }
 
+        var checked = booleanArrayOf(false, false, false, false, false, false)
+
         fun showStep(step: LiveData<LessonWithStep>) {
-            lessonSymbol.viewStub?.isVisible = true;
-            lessonInfo.viewStub?.isVisible = false;
-            /*if (step.value!!.step.data is ShowDots || step.value!!.step.data is ShowSymbol) {
-                lessonSymbol.viewStub?.isVisible = true;
-                lessonInfo.viewStub?.isVisible = false;
-                /*dotCheckBoxes.forEach {
-                    it.isClickable = true
-                    it.setOnCheckedChangeListener { _, _ ->
-                        // TODO check input, make toast if correct
-                        //viewModel.checkInput(data.symbol.brailleDots) // doesn't work
-                    }
-                }*/
+            lessonSymbol.viewStub?.isVisible = true; // TODO remove this temp line after all fixed
+            /* TODO why null pointer exception?
+            when (viewModel.currentLessonStep.value!!.step.data) {
+                is Info, is LastInfo -> {
+                    lessonSymbol.viewStub?.isVisible = false;
+                    lessonInfo.viewStub?.isVisible = true;
+                    // TODO set textView text equal to step text
+                    // infoTextView.text = viewModel.currentLessonStep.value!!.step.<text>
+                }
+
+                is InputSymbol, is InputDots -> {
+                    checked = booleanArrayOf(false, false, false, false, false, false)
+                    /*
+                    bigLetter.text = step. <TODO Symbol or ' ' if InputDots>
+                    for (i in dotCheckBoxes.indices){
+                        dotCheckBoxes[i].isClickable = false
+                        dotCheckBoxes[i].setOnCheckedChangeListener { _, isChecked ->
+                            checked[i] = isChecked
+                            if (checked contentEquals step.<TODO BrailleDots>)
+                                Toast.makeText(context, "правильно", Toast.LENGTH_SHORT).show()
+                        }
+                        dotCheckBoxes[i].isChecked = step.<TODO BrailleDots>[i]
+                    }*/
+                    lessonSymbol.viewStub?.isVisible = true;
+                    lessonInfo.viewStub?.isVisible = false;
+                }
+
+                is ShowSymbol, is ShowDots -> {
+                    lessonSymbol.viewStub?.isVisible = true;
+                    lessonInfo.viewStub?.isVisible = false;
+
+                    /*
+                    bigLetter.text = step. <TODO Symbol or ' ' if ShowDots>
+                    for (i in dotCheckBoxes.indices){
+                        dotCheckBoxes[i].isClickable = false
+                        dotCheckBoxes[i].setOnCheckedChangeListener{_, _ ->}
+                        dotCheckBoxes[i].isChecked = step.<TODO BrailleDots>[i]
+                    }*/
+                }
             }*/
-            // TODO update view in case of other step.value.step.data type
         }
         nextButton.setOnClickListener {
             viewModel.nextStep()
