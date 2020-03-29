@@ -2,11 +2,13 @@ package ru.spbstu.amd.learnbraille.screens.lessons
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import kotlinx.android.synthetic.main.fragment_lesson_step.*
 import ru.spbstu.amd.learnbraille.R
 import ru.spbstu.amd.learnbraille.database.*
 import ru.spbstu.amd.learnbraille.databinding.FragmentLessonStepBinding
@@ -16,8 +18,7 @@ class LessonStepFragment : Fragment() {
 
     private lateinit var viewModel: LessonStepViewModel
 
-    // TODO replace
-    private val userId = 1L
+    private val DefaultUserId = 1L
 
     private val title: String
         get() = when (viewModel.currentLessonStep.value!!.step.data) {
@@ -56,7 +57,7 @@ class LessonStepFragment : Fragment() {
         val application = requireNotNull(activity).application
         val database = LearnBrailleDatabase.getInstance(application)
         val viewModelFactory = LessonStepViewModelFactory(
-            application, userId, database.stepDao, database.userPassedStepDao
+            application, DefaultUserId, database.stepDao, database.userPassedStepDao
         ) {
             null
         }
@@ -72,6 +73,9 @@ class LessonStepFragment : Fragment() {
         })
 
         setHasOptionsMenu(true)
+
+
+        lessonDots.viewStub?.isVisible = true
 
     }.root
 
