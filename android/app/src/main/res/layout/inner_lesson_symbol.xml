@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ru.spbstu.amd.learnbraille.views.ButtonsView
-            android:id="@+id/practice_buttons"
+            android:id="@+id/lesson_dots"
             style="@style/BrailleDotsButtonsView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/letter"

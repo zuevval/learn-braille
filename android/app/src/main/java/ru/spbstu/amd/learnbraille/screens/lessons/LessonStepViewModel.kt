@@ -78,8 +78,6 @@ class LessonStepViewModel(
     } else {
         when (val data = _currentLessonStep.step.data) {
             is LastInfo -> Timber.w("No next step: last step reached, remove next button from ui")
-            is InputSymbol -> checkInput(data.symbol.brailleDots)
-            is InputDots -> checkInput(data.dots)
             else -> {
                 markPassed()
                 setNextStep()
