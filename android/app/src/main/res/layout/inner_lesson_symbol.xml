@@ -12,11 +12,11 @@
         <TextView
             android:id="@+id/letter"
             style="@style/BigLetterTextView"
-            android:text="A"
-            app:layout_constraintBottom_toTopOf="@+id/practice_buttons"
+            android:text=""
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="А" />
 
         <ru.spbstu.amd.learnbraille.views.ButtonsView
             android:id="@+id/lesson_dots"
