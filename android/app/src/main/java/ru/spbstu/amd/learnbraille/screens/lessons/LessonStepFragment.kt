@@ -128,13 +128,13 @@ class LessonStepFragment : Fragment() {
                     /*
                     bigLetter.text = step. <TODO Symbol or ' ' if InputDots>
                     for (i in dotCheckBoxes.indices){
-                        dotCheckBoxes[i].isClickable = false
+                        dotCheckBoxes[i].isChecked = false
+                        dotCheckBoxes[i].isClickable = true
                         dotCheckBoxes[i].setOnCheckedChangeListener { _, isChecked ->
                             checked[i] = isChecked
                             if (checked contentEquals step.<TODO BrailleDots>)
                                 Toast.makeText(context, "правильно", Toast.LENGTH_SHORT).show()
                         }
-                        dotCheckBoxes[i].isChecked = step.<TODO BrailleDots>[i]
                     }*/
                     lessonSymbol.viewStub?.isVisible = true;
                     lessonInfo.viewStub?.isVisible = false;
