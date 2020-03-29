@@ -13,21 +13,23 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+        <!--        TODO extract layout_weight to variable-->
         <Button
             android:id="@+id/prev_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="@{() -> lessonStepViewModel.prevStep()}"
-            android:text="@string/lessons_prev" />
+            android:text="@string/lessons_prev"
+            android:background="@color/forwardButton"
+            android:textColor="@color/colorText" />
 
-        <!--        TODO extract layout_weight to variable-->
         <ViewStub
             android:id="@+id/lesson_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="6"
-            android:layout="@layout/inner_lesson_info" />
+            android:layout="@layout/inner_lesson_info"/>
 
         <ViewStub
             android:id="@+id/lesson_dots"
@@ -49,7 +51,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="@{() -> lessonStepViewModel.nextStep()}"
-            android:text="@string/lessons_next" />
+            android:background="@color/forwardButton"
+            android:text="@string/lessons_next"
+            android:textColor="@color/colorText" />
 
     </LinearLayout>
+
 </layout>
