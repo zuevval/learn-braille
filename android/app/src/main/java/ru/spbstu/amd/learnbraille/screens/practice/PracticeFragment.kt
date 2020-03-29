@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.*
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
@@ -13,10 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.braille_dots.view.*
+import ru.spbstu.amd.learnbraille.LearnBrailleApplication
 import ru.spbstu.amd.learnbraille.R
 import ru.spbstu.amd.learnbraille.database.BrailleDotsState
 import ru.spbstu.amd.learnbraille.database.LearnBrailleDatabase
 import ru.spbstu.amd.learnbraille.databinding.FragmentPracticeBinding
+import ru.spbstu.amd.learnbraille.screens.makeUnchecked
 import ru.spbstu.amd.learnbraille.screens.updateTitle
 import timber.log.Timber
 
@@ -76,7 +77,7 @@ class PracticeFragment : Fragment() {
 
             // Use deprecated API to be compatible with old android API levels
             @Suppress("DEPRECATION")
-            buzzer?.vibrate(CORRECT_BUZZ_PATTERN, -1)
+            buzzer?.vibrate(LearnBrailleApplication.CORRECT_BUZZ_PATTERN, -1)
 
             makeUnchecked(dotCheckBoxes)
             viewModel.onCorrectComplete()
@@ -92,7 +93,7 @@ class PracticeFragment : Fragment() {
 
             // Use deprecated API to be compatible with old android API levels
             @Suppress("DEPRECATION")
-            buzzer?.vibrate(INCORRECT_BUZZ_PATTERN, -1)
+            buzzer?.vibrate(LearnBrailleApplication.INCORRECT_BUZZ_PATTERN, -1)
 
             makeUnchecked(dotCheckBoxes)
             viewModel.onIncorrectComplete()
@@ -137,17 +138,5 @@ class PracticeFragment : Fragment() {
                 findNavController().navigate(action)
             }
         }
-    }
-
-    private fun makeUnchecked(checkBoxes: Array<CheckBox>) = checkBoxes
-        .forEach {
-            if (it.isChecked) {
-                it.toggle()
-            }
-        }
-
-    companion object {
-        val CORRECT_BUZZ_PATTERN = longArrayOf(100, 100, 100, 100, 100, 100)
-        val INCORRECT_BUZZ_PATTERN = longArrayOf(0, 200)
     }
 }

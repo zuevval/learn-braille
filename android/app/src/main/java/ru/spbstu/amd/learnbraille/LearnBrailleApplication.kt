@@ -9,4 +9,9 @@ class LearnBrailleApplication : Application() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
     }
+
+    companion object {
+        val CORRECT_BUZZ_PATTERN = longArrayOf(100, 100, 100, 100, 100, 100)
+        val INCORRECT_BUZZ_PATTERN = longArrayOf(0, 200)
+    }
 }
