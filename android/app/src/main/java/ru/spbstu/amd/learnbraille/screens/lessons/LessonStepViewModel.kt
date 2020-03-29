@@ -76,7 +76,7 @@ class LessonStepViewModel(
     fun nextStep(): Unit = if (_currentLessonStep.step.id < stepsPassedUntil) {
         setNextStep()
     } else {
-        when (val data = _currentLessonStep.step.data) {
+        when (_currentLessonStep.step.data) {
             is LastInfo -> Timber.w("No next step: last step reached, remove next button from ui")
             else -> {
                 markPassed()

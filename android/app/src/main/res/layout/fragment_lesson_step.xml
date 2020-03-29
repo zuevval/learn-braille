@@ -14,13 +14,14 @@
         android:orientation="horizontal">
 
         <!--        TODO extract layout_weight to variable-->
+<!--        android:onClick="@{() -> lessonStepViewModel.prevStep()}"-->
         <Button
             android:id="@+id/prev_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/forwardButton"
-            android:onClick="@{() -> lessonStepViewModel.prevStep()}"
+
             android:text="@string/lessons_prev"
             android:textColor="@color/colorText" />
 
@@ -38,13 +39,14 @@
             android:layout_weight="6"
             android:layout="@layout/inner_lesson_symbol" />
 
+<!--        android:onClick="@{() -> lessonStepViewModel.nextStep()}"-->
         <Button
             android:id="@+id/next_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/forwardButton"
-            android:onClick="@{() -> lessonStepViewModel.nextStep()}"
+
             android:text="@string/lessons_next"
             android:textColor="@color/colorText" />
 
