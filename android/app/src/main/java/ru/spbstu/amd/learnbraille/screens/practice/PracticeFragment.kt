@@ -1,6 +1,12 @@
 package ru.spbstu.amd.learnbraille.screens.practice
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
+import android.content.IntentFilter
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbDeviceConnection
+import android.hardware.usb.UsbManager
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.*
@@ -12,13 +18,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.braille_dots.view.*
+
 import ru.spbstu.amd.learnbraille.LearnBrailleApplication
+import kotlinx.android.synthetic.main.fragment_practice.*
 import ru.spbstu.amd.learnbraille.R
+import ru.spbstu.amd.learnbraille.database.BrailleDot
 import ru.spbstu.amd.learnbraille.database.BrailleDotsState
 import ru.spbstu.amd.learnbraille.database.LearnBrailleDatabase
 import ru.spbstu.amd.learnbraille.databinding.FragmentPracticeBinding
 import ru.spbstu.amd.learnbraille.screens.makeUnchecked
 import ru.spbstu.amd.learnbraille.screens.updateTitle
+import ru.spbstu.amd.learnbraille.serial.UsbSerial
+import ru.spbstu.amd.learnbraille.serial.UsbSerial.Companion.USB_SERVICE
 import timber.log.Timber
 
 class PracticeFragment : Fragment() {
@@ -53,6 +64,16 @@ class PracticeFragment : Fragment() {
             )
         }
 
+        // init serial connection with Braille Trainer
+        @SuppressLint("WrongConstant") // permit `application.getSystemService(USB_SERVICE)`
+        val usbManager = application.getSystemService(USB_SERVICE) as UsbManager
+        val filter = IntentFilter()
+        filter.addAction(UsbSerial.ACTION_USB_PERMISSION)
+        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+        val serial = UsbSerial(usbManager, application);
+        application.registerReceiver(serial.broadcastReceiver, filter)
+
         viewModelFactory = PracticeViewModelFactory(
             dataSource, application, BrailleDotsState(dotCheckBoxes)
         )
@@ -72,7 +93,10 @@ class PracticeFragment : Fragment() {
                 return@Observer
             }
 
-            Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show()
+            var toastMessage = "Правильно!"
+            if (viewModel.ifHintUsed())
+                toastMessage += "\n Но с подсказкой балл не даётся"
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
             Timber.i("Handle correct")
 
             // Use deprecated API to be compatible with old android API levels
@@ -83,12 +107,31 @@ class PracticeFragment : Fragment() {
             viewModel.onCorrectComplete()
         })
 
+        hintButton.setOnClickListener {
+            viewModel.onHint()
+            Toast.makeText(context, viewModel.getDotsString(), Toast.LENGTH_SHORT).show()
+            Timber.i("Hint invoked")
+            val expectedDots = viewModel.getExpectedDots()
+            Timber.i(expectedDots.toString())
+            dotCheckBoxes[0].isChecked = expectedDots?.b1 == BrailleDot.F
+            dotCheckBoxes[1].isChecked = expectedDots?.b2 == BrailleDot.F
+            dotCheckBoxes[2].isChecked = expectedDots?.b3 == BrailleDot.F
+            dotCheckBoxes[3].isChecked = expectedDots?.b4 == BrailleDot.F
+            dotCheckBoxes[4].isChecked = expectedDots?.b5 == BrailleDot.F
+            dotCheckBoxes[5].isChecked = expectedDots?.b6 == BrailleDot.F
+            dotCheckBoxes.forEach { it.isClickable = false }
+
+            if (expectedDots != null) {
+                serial.trySend(expectedDots)
+            }
+        }
+
         viewModel.eventIncorrect.observe(this@PracticeFragment, Observer {
             if (!it) {
                 return@Observer
             }
 
-            Toast.makeText(context, "Incorrect!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Неправильно!", Toast.LENGTH_SHORT).show()
             Timber.i("Handle incorrect")
 
             // Use deprecated API to be compatible with old android API levels
@@ -106,6 +149,7 @@ class PracticeFragment : Fragment() {
 
         viewModel.nLettersFaced.observe(this@PracticeFragment, Observer {
             updateTitle(title)
+            dotCheckBoxes.forEach { it.isClickable = true }
         })
 
         setHasOptionsMenu(true)
