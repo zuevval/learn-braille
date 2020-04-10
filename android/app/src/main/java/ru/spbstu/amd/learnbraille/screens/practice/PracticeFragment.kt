@@ -2,10 +2,7 @@ package ru.spbstu.amd.learnbraille.screens.practice
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.content.IntentFilter
-import android.hardware.usb.UsbDevice
-import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.os.Bundle
 import android.os.Vibrator
@@ -17,31 +14,30 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.braille_dots.view.*
-
-import ru.spbstu.amd.learnbraille.LearnBrailleApplication
-import kotlinx.android.synthetic.main.fragment_practice.*
+import ru.spbstu.amd.learnbraille.CORRECT_BUZZ_PATTERN
+import ru.spbstu.amd.learnbraille.INCORRECT_BUZZ_PATTERN
 import ru.spbstu.amd.learnbraille.R
-import ru.spbstu.amd.learnbraille.database.BrailleDot
-import ru.spbstu.amd.learnbraille.database.BrailleDotsState
 import ru.spbstu.amd.learnbraille.database.LearnBrailleDatabase
+import ru.spbstu.amd.learnbraille.database.entities.BrailleDot
+import ru.spbstu.amd.learnbraille.database.entities.BrailleDots
+import ru.spbstu.amd.learnbraille.database.entities.list
+import ru.spbstu.amd.learnbraille.database.entities.spelling
 import ru.spbstu.amd.learnbraille.databinding.FragmentPracticeBinding
-import ru.spbstu.amd.learnbraille.screens.makeUnchecked
 import ru.spbstu.amd.learnbraille.screens.updateTitle
 import ru.spbstu.amd.learnbraille.serial.UsbSerial
-import ru.spbstu.amd.learnbraille.serial.UsbSerial.Companion.USB_SERVICE
+import ru.spbstu.amd.learnbraille.views.*
 import timber.log.Timber
 
 class PracticeFragment : Fragment() {
 
     private lateinit var viewModel: PracticeViewModel
-    private lateinit var viewModelFactory: PracticeViewModelFactory
+    private lateinit var dots: Dots
     private var buzzer: Vibrator? = null
 
     private val title: String
-        get() = getString(R.string.practice_actionbar_title).format(
-            viewModel.nCorrect.value,
-            viewModel.nLettersFaced.value
+        get() = getString(R.string.practice_actionbar_title_template).format(
+            viewModel.nCorrect,
+            viewModel.nTries
         )
 
     override fun onCreateView(
@@ -55,32 +51,18 @@ class PracticeFragment : Fragment() {
         false
     ).apply {
 
+        Timber.i("Start initialize practice fragment")
+
         val application: Application = requireNotNull(activity).application
         val dataSource = LearnBrailleDatabase.getInstance(application).symbolDao
-        val dotCheckBoxes = practiceButtons.run {
-            arrayOf(
-                dotButton1, dotButton2, dotButton3,
-                dotButton4, dotButton5, dotButton6
-            )
+        dots = practiceButtons.dots
+
+        val viewModelFactory = PracticeViewModelFactory(dataSource, application) {
+            dots.brailleDots
         }
-
-        // init serial connection with Braille Trainer
-        @SuppressLint("WrongConstant") // permit `application.getSystemService(USB_SERVICE)`
-        val usbManager = application.getSystemService(USB_SERVICE) as UsbManager
-        val filter = IntentFilter()
-        filter.addAction(UsbSerial.ACTION_USB_PERMISSION)
-        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-        val serial = UsbSerial(usbManager, application);
-        application.registerReceiver(serial.broadcastReceiver, filter)
-
-        viewModelFactory = PracticeViewModelFactory(
-            dataSource, application, BrailleDotsState(dotCheckBoxes)
-        )
         viewModel = ViewModelProvider(
             this@PracticeFragment, viewModelFactory
         ).get(PracticeViewModel::class.java)
-
         buzzer = activity?.getSystemService()
 
 
@@ -88,84 +70,91 @@ class PracticeFragment : Fragment() {
         lifecycleOwner = this@PracticeFragment
 
 
-        viewModel.eventCorrect.observe(this@PracticeFragment, Observer {
+        // Init serial connection with Braille Trainer
+        // TODO extract initialization to factory
+        // TODO use application.usbManager
+        @SuppressLint("WrongConstant") // permit `application.getSystemService(USB_SERVICE)`
+        val usbManager = application.getSystemService("usb") as UsbManager
+        val filter = IntentFilter().apply {
+            addAction(UsbSerial.ACTION_USB_PERMISSION)
+            addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)
+            addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+        }
+        val serial = UsbSerial(usbManager, application)
+        application.registerReceiver(serial.broadcastReceiver, filter)
+
+
+        viewModel.eventCorrect.observe(viewLifecycleOwner, Observer {
             if (!it) {
                 return@Observer
             }
 
-            var toastMessage = "Правильно!"
-            if (viewModel.ifHintUsed())
-                toastMessage += "\n Но с подсказкой балл не даётся"
-            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
             Timber.i("Handle correct")
+
+            Toast.makeText(context, getString(R.string.msgCorrect), Toast.LENGTH_SHORT).show()
 
             // Use deprecated API to be compatible with old android API levels
             @Suppress("DEPRECATION")
-            buzzer?.vibrate(LearnBrailleApplication.CORRECT_BUZZ_PATTERN, -1)
+            buzzer?.vibrate(CORRECT_BUZZ_PATTERN, -1)
 
-            makeUnchecked(dotCheckBoxes)
+            dots.uncheck()
+            updateTitle(title)
+
             viewModel.onCorrectComplete()
         })
 
-        hintButton.setOnClickListener {
-            viewModel.onHint()
-            Toast.makeText(context, viewModel.getDotsString(), Toast.LENGTH_SHORT).show()
-            Timber.i("Hint invoked")
-            val expectedDots = viewModel.getExpectedDots()
-            Timber.i(expectedDots.toString())
-            dotCheckBoxes[0].isChecked = expectedDots?.b1 == BrailleDot.F
-            dotCheckBoxes[1].isChecked = expectedDots?.b2 == BrailleDot.F
-            dotCheckBoxes[2].isChecked = expectedDots?.b3 == BrailleDot.F
-            dotCheckBoxes[3].isChecked = expectedDots?.b4 == BrailleDot.F
-            dotCheckBoxes[4].isChecked = expectedDots?.b5 == BrailleDot.F
-            dotCheckBoxes[5].isChecked = expectedDots?.b6 == BrailleDot.F
-            dotCheckBoxes.forEach { it.isClickable = false }
-
-            if (expectedDots != null) {
-                serial.trySend(expectedDots)
-            }
-        }
-
-        viewModel.eventIncorrect.observe(this@PracticeFragment, Observer {
+        viewModel.eventIncorrect.observe(viewLifecycleOwner, Observer {
             if (!it) {
                 return@Observer
             }
 
-            Toast.makeText(context, "Неправильно!", Toast.LENGTH_SHORT).show()
-            Timber.i("Handle incorrect")
+            Timber.i("Handle incorrect: entered = ${dots.spelling}")
+
+            Toast.makeText(context, getString(R.string.msgIncorrect), Toast.LENGTH_SHORT).show()
 
             // Use deprecated API to be compatible with old android API levels
             @Suppress("DEPRECATION")
-            buzzer?.vibrate(LearnBrailleApplication.INCORRECT_BUZZ_PATTERN, -1)
+            buzzer?.vibrate(INCORRECT_BUZZ_PATTERN, -1)
 
-            makeUnchecked(dotCheckBoxes)
+            dots.uncheck()
+            updateTitle(title)
+
             viewModel.onIncorrectComplete()
         })
 
+        viewModel.eventHint.observe(viewLifecycleOwner, Observer { expectedDots: BrailleDots? ->
+            if (expectedDots == null) {
+                return@Observer
+            }
 
-        viewModel.nCorrect.observe(this@PracticeFragment, Observer {
-            updateTitle(title)
+            Timber.i("Handle hint")
+
+            val toast = getString(R.string.practice_hint_template).format(expectedDots.spelling)
+            Toast.makeText(context, toast, Toast.LENGTH_LONG).show()
+
+            (dots zip expectedDots.list).forEach { (checkBox, dot) ->
+                checkBox.isChecked = dot == BrailleDot.F
+            }
+            dots.clickable(false)
+
+            serial.trySend(expectedDots)
+
+            viewModel.onHintComplete()
         })
 
-        viewModel.nLettersFaced.observe(this@PracticeFragment, Observer {
-            updateTitle(title)
-            dotCheckBoxes.forEach { it.isClickable = true }
-        })
-
-        setHasOptionsMenu(true)
-
-
-        viewModel.eventWaitDBInit.observe(this@PracticeFragment, Observer {
+        viewModel.eventPassHint.observe(viewLifecycleOwner, Observer {
             if (!it) {
                 return@Observer
             }
-            Toast.makeText(
-                context,
-                getString(R.string.practice_db_not_initialized_warning),
-                Toast.LENGTH_LONG
-            ).show()
-            findNavController().navigate(R.id.action_practiceFragment_to_menuFragment)
+            Timber.i("Handle pass hint")
+            dots.uncheck()
+            dots.clickable(true)
+            viewModel.onPassHintComplete()
         })
+
+
+        updateTitle(title) // Requires viewModel being initialized
+        setHasOptionsMenu(true)
 
     }.root
 
@@ -177,6 +166,7 @@ class PracticeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem) = super.onOptionsItemSelected(item).also {
         when (item.itemId) {
             R.id.help -> {
+                Timber.i("Navigate to practice help")
                 val action = PracticeFragmentDirections.actionPracticeFragmentToHelpFragment()
                 action.helpMessage = getString(R.string.practice_help)
                 findNavController().navigate(action)

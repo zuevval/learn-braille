@@ -9,11 +9,16 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
-import ru.spbstu.amd.learnbraille.database.BrailleDots
+import ru.spbstu.amd.learnbraille.database.entities.BrailleDots
 import timber.log.Timber
 
-class UsbSerial// TODO make this class a singleton and initialize on startup; allow multiple connection attempts
-    (usbManager: UsbManager, context: Context) {
+
+/**********************************/
+/********** TODO refactor *********/
+/**********************************/
+
+
+class UsbSerial(usbManager: UsbManager, context: Context) {
     private var mUsbManager: UsbManager = usbManager
     private var invokingContext: Context = context
     var mDevice: UsbDevice? = null
@@ -32,9 +37,11 @@ class UsbSerial// TODO make this class a singleton and initialize on startup; al
     }
 
     fun trySend(brailleDots: BrailleDots) {
+        val setupTimeMillis = 5_000
         val data = brailleDots.toString().replace("F", "1").replace("E", "0")
-        if (System.currentTimeMillis() - birthTime > 5000)
+        if (System.currentTimeMillis() - birthTime > setupTimeMillis) {
             sendData(data)
+        }
     }
 
 
@@ -55,7 +62,7 @@ class UsbSerial// TODO make this class a singleton and initialize on startup; al
                         )
                     mUsbManager.requestPermission(mDevice, intent)
                     keep = false
-                    debugLog("connection successfull")
+                    debugLog("connection successful")
                 } else {
                     mConnection = null
                     mDevice = null
@@ -72,46 +79,53 @@ class UsbSerial// TODO make this class a singleton and initialize on startup; al
 
     private fun sendData(input: String) {
         mSerial?.write(input.toByteArray())
-       debugLog("sending data: $input")
+        debugLog("sending data: $input")
     }
 
     private fun disconnectUsb() {
         mSerial?.close()
     }
 
-    private fun debugLog(msg:String){
+    private fun debugLog(msg: String) {
         Timber.i(msg)
     }
 
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action!! == ACTION_USB_PERMISSION) {
-                val granted: Boolean =
-                    intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)
-                if (granted) {
-                    mConnection = mUsbManager.openDevice(mDevice)
-                    mSerial = UsbSerialDevice.createUsbSerialDevice(mDevice, mConnection)
-                    if (mSerial != null) {
-                        if (mSerial!!.open()) {
-                            mSerial!!.setBaudRate(9600)
-                            mSerial!!.setDataBits(UsbSerialInterface.DATA_BITS_8)
-                            mSerial!!.setStopBits(UsbSerialInterface.STOP_BITS_1)
-                            mSerial!!.setParity(UsbSerialInterface.PARITY_NONE)
-                            mSerial!!.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
-                        } else {
-                            debugLog("port not open")
-                        }
-                    } else {
-                        debugLog("port is none")
-                    }
-                } else {
-                    debugLog("permission is not granted")
+            when (intent?.action) {
+                UsbManager.ACTION_USB_ACCESSORY_ATTACHED -> {
+                    startUsbConnection()
+                    return
                 }
-            } else if (intent.action == UsbManager.ACTION_USB_ACCESSORY_ATTACHED) {
-                startUsbConnection()
-            } else if (intent.action == UsbManager.ACTION_USB_ACCESSORY_DETACHED) {
-                disconnectUsb()
+                UsbManager.ACTION_USB_ACCESSORY_DETACHED -> {
+                    disconnectUsb()
+                    return
+                }
+                ACTION_USB_PERMISSION -> {
+                }
+                else -> return
             }
+            val granted: Boolean =
+                intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)
+            if (!granted) {
+                debugLog("permission is not granted")
+                return
+            }
+            mConnection = mUsbManager.openDevice(mDevice)
+            mSerial = UsbSerialDevice.createUsbSerialDevice(mDevice, mConnection)
+            if (mSerial == null) {
+                debugLog("port is none")
+                return
+            }
+            if (!mSerial!!.open()) {
+                debugLog("port not open")
+                return
+            }
+            mSerial!!.setBaudRate(9600)
+            mSerial!!.setDataBits(UsbSerialInterface.DATA_BITS_8)
+            mSerial!!.setStopBits(UsbSerialInterface.STOP_BITS_1)
+            mSerial!!.setParity(UsbSerialInterface.PARITY_NONE)
+            mSerial!!.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
         }
     }
 }
