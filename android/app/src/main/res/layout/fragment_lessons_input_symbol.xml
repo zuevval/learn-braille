@@ -53,30 +53,42 @@
             android:layout_marginBottom="@dimen/braille_dots_lessons_vertical_margin"
             />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.23" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.77" />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            android:maxWidth="70sp"
+            android:minWidth="70sp"
             app:layout_constraintTop_toBottomOf="@+id/letter"
             app:layout_constraintVertical_bias="0.0">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:visibility="invisible" />
 
             <!--suppress AndroidDomInspection -->
             <Button
                 android:id="@+id/hint_button"
-                android:layout_width="70sp"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
-                android:background="@drawable/practice_hint_btn_shape"
+                android:background="@drawable/lesson_hint_btn_shape"
                 android:contentDescription="@string/practice_hint"
                 android:onClick="@{() -> inputViewModel.onHint()}"
+                android:layout_margin="7dp"
                 android:text="?"
                 android:textColor="@color/colorText"
                 android:textSize="50sp" />
@@ -86,62 +98,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
-                android:background="@drawable/practice_hint_btn_shape"
+                android:background="@drawable/lesson_hint_btn_shape"
                 android:contentDescription="@string/lessons_prev"
                 android:scaleType="fitCenter"
+                android:layout_margin="7dp"
                 android:text="&lt;"
                 android:textColor="@color/colorText"
                 android:textSize="70sp"
                 />
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:visibility="invisible" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guideline_right"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/letter"
             app:layout_constraintVertical_bias="0.0">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:visibility="invisible" />
 
             <ImageButton
                 android:id="@+id/to_curr_step_button"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
-                android:background="@drawable/practice_btn_shape"
+                android:background="@drawable/lessons_next_btn_shape"
+                android:layout_margin="7dp"
                 android:contentDescription="@string/lessons_to_current"
                 android:src="@android:drawable/ic_dialog_map" />
 
             <ImageButton
                 android:id="@+id/next_button"
-                android:layout_width="70sp"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
-                android:adjustViewBounds="true"
-                android:background="@drawable/practice_btn_shape"
+                android:background="@drawable/lessons_next_btn_shape"
+                android:layout_margin="7sp"
                 android:contentDescription="@string/lessons_send_answer"
                 android:onClick="@{() -> inputViewModel.onCheck()}"
-                android:scaleType="fitCenter"
                 android:src="@android:drawable/ic_media_play" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:visibility="invisible" />
         </LinearLayout>
 
