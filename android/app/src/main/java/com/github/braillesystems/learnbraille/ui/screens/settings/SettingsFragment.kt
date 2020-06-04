@@ -23,7 +23,7 @@ class SettingsFragment : androidx.preference.PreferenceFragmentCompat() {
         if (preference != null) {
             if (preference.title == getString(R.string.credit_title)) {
                 val action = CreditFragmentDirections.actionGlobalCreditFragment()
-                action.helpMessage = "credit!"
+                action.helpMessage = getString(R.string.credit_text)
                 navigate(action)
             }
         }

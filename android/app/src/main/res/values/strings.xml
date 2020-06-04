@@ -328,5 +328,25 @@
         Отображать в главном меню кнопку \"Сканирование QR-кода\" для игры с карточками.
     </string>
     <string name="credit_title"> О разработчиках </string>
+    <string name="credit_text">
+        <![CDATA[
+            Пишите нам на почту: <a href="mailto:braille.systems@gmail.com">braille.systems@gmail.com</a>
+            <br>
+            <br>
+            Это приложение было создано командой <b>Braille Systems</b>, куда входят: <br>
+            Андрей Стоян <a href="https://github.com/winter-yuki">github.com/winter-yuki</a> <br>
+            Валерий Зуев <a href="https://github.com/zuevval">github.com/zuevval</a> <br>
+            Анна Мельникова <a href="https://github.com/kaustika">github.com/kaustika</a> <br>
+            Анна Курова <a href="https://github.com/katonapng">github.com/katonapng</a> <br>
+            Мария Бавыкина <a href="https://github.com/mariiabav">github.com/mariiabav</a> <br>
+            Алексей Цветков <a href="https://github.com/adtsvetkov">github.com/adtsvetkov</a>
+            <br>
+            <br>
+            Вы можете посмотреть код этого приложения или даже принять участие в разработке.
+            Для этого перейдите по ссылке<br>
+            <a href="https://github.com/braille-systems/learn-braille">github.com/braille-systems/learn-braille</a>
+        ]]>
+
+    </string>
 
 </resources>

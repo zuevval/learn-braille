@@ -1,6 +1,7 @@
 package com.github.braillesystems.learnbraille.ui.screens.help
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class CreditFragment : HelpFragment() {
         helpMessage.movementMethod = ScrollingMovementMethod()
         checkedAnnounce(content.removeHtmlMarkup())
         title = getString(R.string.credit_title)
+        helpMessage.movementMethod = LinkMovementMethod.getInstance();
     }.root
 
 }
