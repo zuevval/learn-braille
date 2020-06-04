@@ -14,7 +14,7 @@ import com.github.braillesystems.learnbraille.utils.getStringArg
 import com.github.braillesystems.learnbraille.utils.removeHtmlMarkup
 import com.github.braillesystems.learnbraille.utils.title
 
-class HelpFragment : Fragment() {
+open class HelpFragment : Fragment() {
 
     private val helpMessageArgName = "help_message"
 

@@ -327,5 +327,6 @@
     <string name="preference_summary_additional_qrcode_button">
         Отображать в главном меню кнопку \"Сканирование QR-кода\" для игры с карточками.
     </string>
+    <string name="credit_title"> О разработчиках </string>
 
 </resources>
