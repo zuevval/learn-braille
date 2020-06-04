@@ -14,6 +14,11 @@ class SettingsFragment : androidx.preference.PreferenceFragmentCompat() {
         title = getString(R.string.preferences_actionbar_title)
     }
 
+    override fun onResume() {
+        title = getString(R.string.preferences_actionbar_title)
+        super.onResume()
+    }
+
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         if (preference != null) {
             if (preference.title == getString(R.string.credit_title)) {
