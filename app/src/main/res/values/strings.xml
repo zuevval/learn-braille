@@ -315,7 +315,7 @@
     </string>
     <string name="preference_title_only_seen_materials">Повторять только изученное</string>
     <string name="preference_summary_only_seen_materials">
-        В разделе \"Практика\" повторять только символы, пройденные в разделе \"Теория\".
+        Повторять только символы, пройденные в разделе \"Теория\".
     </string>
     <string name="preference_title_additional_announcements">
         Автоозвучка текстов

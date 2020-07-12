@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="@string/preference_practice_use_only_known_materials"
+        android:summary="@string/preference_summary_only_seen_materials"
+        android:theme="@style/SwitchPreferenceButton"
+        android:title="@string/preference_title_only_seen_materials"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceCategory
+        android:key="switchDecksCategory"
+        android:title="Повторяемые темы"
+        app:iconSpaceReserved="false">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="rusLetters"
+            android:title="Русские буквы"
+            app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="uebDigits"
+            android:title="Цифры"
+            app:iconSpaceReserved="false" />
+
+        <!-- TODO set checkboxes programmatically -->
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

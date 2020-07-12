@@ -155,7 +155,7 @@ class CardFragment : AbstractFragmentWithHelp(R.string.practice_help) {
     override fun onOptionsItemSelected(item: MenuItem) = false.also {
         when (item.itemId) {
             R.id.help -> navigateToHelp()
-            R.id.decks_list -> navigate(R.id.action_cardFragment_to_decksList)
+            R.id.decks_list -> navigate(R.id.action_cardFragment_to_practiceSettings)
         }
     }
 }

@@ -35,6 +35,10 @@
         <action
             android:id="@+id/action_cardFragment_to_decksList"
             app:destination="@id/decksList" />
+        <action
+            android:id="@+id/action_cardFragment_to_practiceSettings"
+            app:destination="@id/practiceSettingsFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/helpFragment"
@@ -60,6 +64,11 @@
             app:destination="@id/cardFragment"
             app:popUpTo="@+id/menuFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/practiceSettingsFragment"
+        android:name="com.github.braillesystems.learnbraille.ui.screens.settings.PracticeSettingsFragment"
+        android:label="PracticeSettingsFragment"/>
 
     <action
         android:id="@+id/action_global_menuFragment"
